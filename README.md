@@ -57,3 +57,112 @@ You can try the deployed application here:
 - In-memory / local storage (as per assignment requirements)
 
 ---
+
+⚙️ Setup Instructions
+
+Follow the steps below to run the project locally.
+
+1️⃣ Clone the Repository
+git clone https://github.com/YOUR_USERNAME/task-manager-app-nextjs.git
+
+Navigate into the project directory:
+
+cd task-manager-app-nextjs
+2️⃣ Install Dependencies
+
+Install all required packages using:
+
+npm install
+
+or
+
+yarn install
+3️⃣ Run the Development Server
+
+Start the application:
+
+npm run dev
+
+The application will run on:
+
+http://localhost:3000
+
+Open the browser and navigate to the above URL.
+
+📂 Folder Structure
+
+The project follows a modular and scalable structure using the Next.js App Router architecture.
+
+task-manager-app-nextjs
+│
+├── app
+│   ├── api
+│   │   ├── auth
+│   │   │   ├── login
+│   │   │   └── signup
+│   │   ├── projects
+│   │   └── tasks
+│   │
+│   ├── dashboard
+│   ├── login
+│   ├── signup
+│   └── not-found
+│
+├── components
+│   ├── ProjectCard.tsx
+│   ├── TaskCard.tsx
+│   ├── TaskDialog.tsx
+│   ├── CreateProjectDialog.tsx
+│   └── StatsCard.tsx
+│
+├── redux
+│   ├── store.ts
+│   └── slices
+│       ├── projectSlice.ts
+│       ├── taskSlice.ts
+│       └── authSlice.ts
+│
+├── hooks
+│   └── useAuth.ts
+│
+├── types
+│   └── index.ts
+│
+├── utils
+│   └── storage.ts
+│
+├── public
+│
+└── README.md
+📜 Available Scripts
+
+Run the development server:
+
+npm run dev
+
+Build the project:
+
+npm run build
+
+Start the production build:
+
+npm start
+
+Run ESLint:
+
+npm run lint
+📌 Notes
+
+Authentication is implemented using JWT stored in localStorage.
+
+Redux Toolkit is used for global state management of projects and tasks.
+
+The application uses Next.js API routes as a lightweight backend layer.
+
+Data is stored using in-memory storage/local utilities, as required for the assignment.
+
+👨‍💻 Author
+
+Developed as part of a technical assignment demonstrating modern Next.js, Redux Toolkit, and scalable frontend architecture.
+
+---
