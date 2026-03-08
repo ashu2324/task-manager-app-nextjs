@@ -1,36 +1,59 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Task Manager Dashboard
 
-## Getting Started
+![Next.js](https://img.shields.io/badge/Next.js-14-black?logo=nextdotjs)
+![Redux Toolkit](https://img.shields.io/badge/Redux%20Toolkit-State%20Management-purple?logo=redux)
+![Material UI](https://img.shields.io/badge/Material%20UI-Component%20Library-blue?logo=mui)
+![Tailwind CSS](https://img.shields.io/badge/TailwindCSS-Utility%20CSS-38B2AC?logo=tailwindcss)
+![TypeScript](https://img.shields.io/badge/TypeScript-Strict%20Types-blue?logo=typescript)
 
-First, run the development server:
+A modern **Task Management Dashboard** built with **Next.js, Redux Toolkit, Material UI, and Tailwind CSS**.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+This application allows users to **create projects, manage tasks, track progress, and organize workflows efficiently.**
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🌐 Live Demo
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+You can try the deployed application here:
 
-## Learn More
+👉 **https://task-manager-app-nextjs-ivory.vercel.app/**
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🚀 Features
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- User Authentication (Sign Up / Login)
+- JWT-based authentication
+- Create and manage projects
+- Add multiple tasks to a project
+- Update task status (Todo / In Progress / Done)
+- Edit and delete tasks
+- Expandable project view using Accordion
+- Dashboard statistics overview
+- Responsive UI
+- Redux Toolkit global state management
+- Clean reusable component architecture
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🛠 Tech Stack
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Frontend
+- Next.js (App Router)
+- React
+- TypeScript
+
+### State Management
+- Redux Toolkit
+
+### UI & Styling
+- Material UI
+- Tailwind CSS
+
+### Backend API
+- Next.js API Routes
+
+### Data Storage
+- In-memory / local storage (as per assignment requirements)
+
+---
