@@ -9,6 +9,7 @@ export type ProjectCardProps = {
   onAddTask: (project: Project) => void;
   onStatusChange: (task: Task, status: string) => void;
   onDelete: (task: Task) => void;
+  onEditProject: (project: Project) => void;
 };
 
 export type StatsProps = {
@@ -40,7 +41,6 @@ export interface TaskDialogProps {
   open: boolean;
   projectId: string | number;
   onClose: () => void;
-  onTaskCreated: () => void;
 }
 
 export interface TaskCardProps {

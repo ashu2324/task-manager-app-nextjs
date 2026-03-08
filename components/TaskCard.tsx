@@ -16,8 +16,7 @@ import {
   Button,
 } from "@mui/material";
 
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import UpdateIcon from "@mui/icons-material/Update";
+import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 import { useState } from "react";
@@ -27,32 +26,34 @@ import {
   updateTask as updateTaskRedux,
   deleteTask as deleteTaskRedux,
 } from "@/redux/slices/taskSlice";
-import { AppDispatch } from "@/redux/store";
 
+import { AppDispatch } from "@/redux/store";
 import { TaskCardProps, TaskStatus } from "@/types";
 
-export default function TaskCard({ task, onStatusChange }: TaskCardProps) {
+export default function TaskCard({ task }: TaskCardProps) {
   const dispatch = useDispatch<AppDispatch>();
 
   const [open, setOpen] = useState(false);
-  const [mode, setMode] = useState<"view" | "edit">("view");
 
-  const [title, setTitle] = useState(task.title);
+  const [taskTitle, setTaskTitle] = useState(task.title);
   const [status, setStatus] = useState<TaskStatus>(task.status);
 
   const [confirmDelete, setConfirmDelete] = useState(false);
 
   const resetForm = () => {
-    setTitle(task.title);
+    setTaskTitle(task.title);
     setStatus(task.status);
   };
 
   const updateTask = async () => {
     const res = await fetch("/api/tasks", {
       method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({
         id: task.id,
-        title,
+        taskTitle,
         status,
       }),
     });
@@ -67,6 +68,9 @@ export default function TaskCard({ task, onStatusChange }: TaskCardProps) {
   const deleteTask = async () => {
     await fetch("/api/tasks", {
       method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({
         id: task.id,
       }),
@@ -79,49 +83,29 @@ export default function TaskCard({ task, onStatusChange }: TaskCardProps) {
     <>
       <Card className="shadow-sm hover:shadow-md transition">
         <CardContent className="flex flex-col gap-4">
-          <Typography fontWeight="bold">{task.title}</Typography>
+          <Typography fontWeight="bold">{taskTitle}</Typography>
 
-          <Select
-            size="small"
-            value={status}
-            onChange={(e) => {
-              const newStatus = e.target.value as TaskStatus;
-              setStatus(newStatus);
-              onStatusChange(task, newStatus);
-            }}
-          >
-            <MenuItem value="todo">Todo</MenuItem>
-            <MenuItem value="progress">In Progress</MenuItem>
-            <MenuItem value="done">Done</MenuItem>
-          </Select>
+          {/* STATUS VIEW ONLY */}
+          <Typography variant="body2" color="text.secondary">
+            Status: {task.status.toUpperCase()}
+          </Typography>
 
           <div className="flex gap-2">
-            <Tooltip title="View Task">
-              <IconButton
-                color="primary"
-                onClick={() => {
-                  setMode("view");
-                  setTitle(task.title);
-                  setStatus(task.status);
-                  setOpen(true);
-                }}
-              >
-                <VisibilityIcon />
-              </IconButton>
-            </Tooltip>
-
+            {/* UPDATE */}
             <Tooltip title="Update Task">
               <IconButton
                 color="warning"
                 onClick={() => {
-                  setMode("edit");
+                  // setTaskTitle(task.title);
+                  // setStatus(task.status);
                   setOpen(true);
                 }}
               >
-                <UpdateIcon />
+                <ModeEditIcon />
               </IconButton>
             </Tooltip>
 
+            {/* DELETE */}
             <Tooltip title="Delete Task">
               <IconButton color="error" onClick={() => setConfirmDelete(true)}>
                 <DeleteIcon />
@@ -158,33 +142,32 @@ export default function TaskCard({ task, onStatusChange }: TaskCardProps) {
         </DialogActions>
       </Dialog>
 
-      {/* VIEW / UPDATE */}
+      {/* UPDATE TASK */}
 
       <Dialog
         open={open}
         onClose={() => {
-          resetForm();
+          setTaskTitle(taskTitle);
+          setStatus(task.status);
           setOpen(false);
         }}
         fullWidth
         maxWidth="sm"
       >
-        <DialogTitle>Task Details</DialogTitle>
+        <DialogTitle>Update Task</DialogTitle>
 
         <DialogContent>
           <TextField
             label="Task Title"
             fullWidth
             margin="normal"
-            value={title}
-            disabled={mode === "view"}
-            onChange={(e) => setTitle(e.target.value)}
+            value={taskTitle}
+            onChange={(e) => setTaskTitle(e.target.value)}
           />
 
           <Select
             fullWidth
             value={status}
-            disabled={mode === "view"}
             onChange={(e) => setStatus(e.target.value as TaskStatus)}
             className="mt-4"
           >
@@ -204,11 +187,9 @@ export default function TaskCard({ task, onStatusChange }: TaskCardProps) {
             Cancel
           </Button>
 
-          {mode === "edit" && (
-            <Button variant="contained" onClick={updateTask}>
-              Update
-            </Button>
-          )}
+          <Button variant="contained" onClick={updateTask}>
+            Update
+          </Button>
         </DialogActions>
       </Dialog>
     </>

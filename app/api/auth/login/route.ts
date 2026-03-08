@@ -8,9 +8,6 @@ export async function POST(req: Request) {
     (u) => u.email === body.email && u.password === body.password,
   );
 
-  console.log("Matched User:", user);
-  console.log("All Users:", users);
-
   if (!user) {
     return Response.json({ error: "Invalid credentials" });
   }

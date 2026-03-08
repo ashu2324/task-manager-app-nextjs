@@ -7,7 +7,6 @@ const projectSlice = createSlice({
   name: "projects",
   initialState,
   reducers: {
-
     setProjects: (state, action: PayloadAction<Project[]>) => {
       return action.payload;
     },
@@ -16,16 +15,23 @@ const projectSlice = createSlice({
       state.push(action.payload);
     },
 
-    deleteProject: (state, action: PayloadAction<number>) => {
-      return state.filter(
-        (project) => project.id !== action.payload
+    updateProject: (state, action) => {
+      const index = state.findIndex(
+        (project) => project.id === action.payload.id,
       );
+
+      if (index !== -1) {
+        state[index] = action.payload;
+      }
     },
 
+    deleteProject: (state, action) => {
+      return state.filter((project) => project.id !== action.payload);
+    },
   },
 });
 
-export const { setProjects, addProject, deleteProject } =
+export const { setProjects, addProject, updateProject, deleteProject } =
   projectSlice.actions;
 
 export default projectSlice.reducer;

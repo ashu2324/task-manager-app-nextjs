@@ -2,34 +2,34 @@
 
 import useAuth from "../../hooks/useAuth";
 import { useEffect, useState } from "react";
+
 import {
   Button,
   Typography,
   AppBar,
   Toolbar,
-  IconButton,
-  Tooltip,
   Dialog,
   DialogTitle,
   DialogContent,
   DialogActions,
+  IconButton,
+  Tooltip,
 } from "@mui/material";
 
-import { useRouter } from "next/navigation";
 import { useDispatch, useSelector } from "react-redux";
 
-import TaskDialog from "../../components/TaskDialog";
-import ProjectCard from "../../components/ProjectCard";
-import StatsCard from "../../components/StatsCard";
-import CreateProjectDialog from "../../components/CreateProjectDialog";
+import { RootState, AppDispatch } from "@/redux/store";
+import { setProjects } from "@/redux/slices/projectSlice";
+import { setTasks } from "@/redux/slices/taskSlice";
 
 import LogoutIcon from "@mui/icons-material/Logout";
+import ProjectCard from "@/components/ProjectCard";
+import TaskDialog from "@/components/TaskDialog";
+import CreateProjectDialog from "@/components/CreateProjectDialog";
 
-import { Project, Task } from "@/types";
-import { AppDispatch, RootState } from "@/redux/store";
-
-import { setProjects } from "@/redux/slices/projectSlice";
-import { setTasks, updateTask, deleteTask } from "@/redux/slices/taskSlice";
+import { Project } from "@/types";
+import { useRouter } from "next/navigation";
+import StatsCard from "@/components/StatsCard";
 
 export default function Dashboard() {
   useAuth();
@@ -37,70 +37,41 @@ export default function Dashboard() {
   const router = useRouter();
   const dispatch = useDispatch<AppDispatch>();
 
-  /* ---------------- REDUX STATE ---------------- */
-
   const projects = useSelector((state: RootState) => state.projects);
+
   const tasks = useSelector((state: RootState) => state.tasks);
 
-  /* ---------------- LOCAL UI STATE ---------------- */
-
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [projectDialog, setProjectDialog] = useState(false);
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [confirmLogout, setConfirmLogout] = useState(false);
-  const [openProjectDialog, setOpenProjectDialog] = useState(false);
-
-  /* ---------------- PROJECTS ---------------- */
+  const [editingProject, setEditingProject] = useState<Project | null>(null);
 
   const loadProjects = async () => {
     const res = await fetch("/api/projects");
+
     const data = await res.json();
 
     dispatch(setProjects(data));
   };
 
-  /* ---------------- TASKS ---------------- */
+  const openEditProject = (project: Project) => {
+    setEditingProject(project);
+    setProjectDialog(true);
+  };
 
   const loadTasks = async () => {
     const res = await fetch("/api/tasks");
+
     const data = await res.json();
 
     dispatch(setTasks(data));
   };
 
-  /* ---------------- OPEN PROJECT DIALOG ---------------- */
-
-  const createProject = () => {
-    setOpenProjectDialog(true);
+  const openTaskDialog = (project: Project) => {
+    setSelectedProject(project);
+    setDialogOpen(true);
   };
-
-  /* ---------------- TASK STATUS ---------------- */
-
-  const handleStatusChange = async (task: Task, status: string) => {
-    await fetch("/api/tasks", {
-      method: "PUT",
-      body: JSON.stringify({
-        id: task.id,
-        status,
-      }),
-    });
-
-    dispatch(updateTask({ ...task, status }));
-  };
-
-  /* ---------------- DELETE TASK ---------------- */
-
-  const handleDelete = async (task: Task) => {
-    await fetch("/api/tasks", {
-      method: "DELETE",
-      body: JSON.stringify({
-        id: task.id,
-      }),
-    });
-
-    dispatch(deleteTask(task.id));
-  };
-
-  /* ---------------- LOGOUT ---------------- */
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -108,25 +79,10 @@ export default function Dashboard() {
     router.push("/login");
   };
 
-  /* ---------------- OPEN TASK DIALOG ---------------- */
-
-  const openTaskDialog = (project: Project) => {
-    setSelectedProject(project);
-    setDialogOpen(true);
-  };
-
-  /* ---------------- INITIAL LOAD ---------------- */
-
   useEffect(() => {
-    const init = async () => {
-      await loadProjects();
-      await loadTasks();
-    };
-
-    init();
+    loadProjects();
+    loadTasks();
   }, []);
-
-  /* ---------------- STATS ---------------- */
 
   const totalProjects = projects.length;
   const totalTasks = tasks.length;
@@ -135,130 +91,92 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-gray-100">
-
-      {/* NAVBAR */}
       <AppBar position="static">
         <Toolbar className="flex justify-between">
-
-          <Typography variant="h6">
-            Task Manager Dashboard
-          </Typography>
+          <Typography variant="h6">Task Manager Dashboard</Typography>
 
           <Tooltip title="Logout">
-            <IconButton
-              color="inherit"
-              onClick={() => setConfirmLogout(true)}
-            >
+            <IconButton color="inherit" onClick={() => setConfirmLogout(true)}>
               <LogoutIcon />
             </IconButton>
           </Tooltip>
-
         </Toolbar>
       </AppBar>
 
       {/* LOGOUT CONFIRMATION */}
       <Dialog open={confirmLogout} onClose={() => setConfirmLogout(false)}>
-
-        <DialogTitle>
-          Logout
-        </DialogTitle>
+        <DialogTitle>Logout</DialogTitle>
 
         <DialogContent>
-          <Typography>
-            Are you sure you want to logout?
-          </Typography>
+          <Typography>Are you sure you want to logout?</Typography>
         </DialogContent>
 
         <DialogActions>
+          <Button onClick={() => setConfirmLogout(false)}>Cancel</Button>
 
-          <Button onClick={() => setConfirmLogout(false)}>
-            Cancel
-          </Button>
-
-          <Button
-            color="error"
-            variant="contained"
-            onClick={handleLogout}
-          >
+          <Button color="error" variant="contained" onClick={handleLogout}>
             Logout
           </Button>
-
         </DialogActions>
-
       </Dialog>
 
-      {/* PAGE */}
       <div className="w-full py-4 mx-auto px-4 max-w-7xl">
-
         {/* STATS */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-
           <StatsCard title="Total Projects" value={totalProjects} />
 
           <StatsCard title="Total Tasks" value={totalTasks} />
 
-          <StatsCard
-            title="Completed Tasks"
-            value={completedTasks}
-          />
+          <StatsCard title="Completed Tasks" value={completedTasks} />
 
-          <StatsCard
-            title="Pending Tasks"
-            value={pendingTasks}
-          />
-
+          <StatsCard title="Pending Tasks" value={pendingTasks} />
         </div>
+        <div className="max-w-7xl mx-auto p-4">
+          <div className="flex justify-between items-center mb-4">
+            <Typography
+              variant="h5"
+              sx={{
+                fontSize: {
+                  xs: 18,
+                  sm: 24,
+                },
+              }}
+            >
+              Your Projects [{projects.length}]
+            </Typography>
 
-        {/* HEADER */}
-        <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 my-4">
-
-          <Typography variant="h5" fontWeight="bold">
-            Your Projects [{projects.length}]
-          </Typography>
-
-          <Button
-            variant="contained"
-            onClick={createProject}
-          >
-            + Create Project
-          </Button>
-
+            <Button variant="contained" onClick={() => setProjectDialog(true)}>
+              Create Project
+            </Button>
+          </div>
         </div>
-
-        {/* PROJECT GRID */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 items-start">
-
           {projects.map((project) => (
             <ProjectCard
               key={project.id}
               project={project}
               tasks={tasks}
               onAddTask={openTaskDialog}
-              onStatusChange={handleStatusChange}
-              onDelete={handleDelete}
+              onStatusChange={() => {}}
+              onDelete={() => {}}
+              onEditProject={openEditProject}
             />
           ))}
-
         </div>
-
       </div>
 
-      {/* PROJECT CREATION DIALOG */}
       <CreateProjectDialog
-        open={openProjectDialog}
-        onClose={() => setOpenProjectDialog(false)}
+        open={projectDialog}
+        onClose={() => setProjectDialog(false)}
       />
 
-      {/* TASK DIALOG */}
       {selectedProject && (
         <TaskDialog
           open={dialogOpen}
           projectId={selectedProject.id}
           onClose={() => setDialogOpen(false)}
-          onTaskCreated={loadTasks}
         />
       )}
-
     </div>
   );
 }

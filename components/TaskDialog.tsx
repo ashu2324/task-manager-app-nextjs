@@ -45,36 +45,45 @@ export default function TaskDialog({
     setTasks(updated);
   };
 
+  const handleClose = () => {
+    setTasks([""]);
+    onClose();
+  };
+
   const createTasks = async () => {
     const validTasks = tasks.filter((t) => t.trim() !== "");
 
     if (validTasks.length === 0) return;
 
-    for (const title of validTasks) {
-      const res = await fetch("/api/tasks", {
-        method: "POST",
-        body: JSON.stringify({
-          title,
-          projectId,
-          status: "todo",
-        }),
-      });
+    await Promise.all(
+      validTasks.map(async (title) => {
+        const res = await fetch("/api/tasks", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            title,
+            projectId,
+            status: "todo",
+          }),
+        });
 
-      const newTask = await res.json();
-
-      dispatch(addTask(newTask));
-    }
+        const newTask = await res.json();
+        dispatch(addTask(newTask));
+      }),
+    );
 
     setTasks([""]);
     onClose();
   };
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+    <Dialog open={open} onClose={handleClose} fullWidth maxWidth="sm">
       <DialogTitle>Create Tasks</DialogTitle>
 
       <DialogContent>
-        <Typography variant="body2" color="text.secondary" className="mb-4">
+        <Typography variant="body2" color="text.secondary" className="!mb-2">
           Add multiple tasks at once
         </Typography>
 
@@ -101,7 +110,7 @@ export default function TaskDialog({
       </DialogContent>
 
       <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
+        <Button onClick={handleClose}>Cancel</Button>
 
         <Button variant="contained" onClick={createTasks}>
           Create Tasks

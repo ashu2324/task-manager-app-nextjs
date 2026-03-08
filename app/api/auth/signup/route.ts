@@ -11,8 +11,6 @@ export async function POST(req: Request){
  }
 
  users.push(user)
-
- console.log("Current Users:", users);
   
  return Response.json({
    message: "User created"

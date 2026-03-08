@@ -8,7 +8,9 @@ import {
   DialogActions,
   Button,
   TextField,
+  Typography,
 } from "@mui/material";
+
 import { CreateProjectDialogProps, Project } from "@/types";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/redux/store";
@@ -19,38 +21,84 @@ export default function CreateProjectDialog({
   onClose,
 }: CreateProjectDialogProps) {
   const dispatch = useDispatch<AppDispatch>();
+
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [dueDate, setDueDate] = useState("");
 
+  const [error, setError] = useState("");
+
+  /* reset form */
+
+  const resetForm = () => {
+    setName("");
+    setDescription("");
+    setDueDate("");
+    setError("");
+  };
+
+  /* handle cancel */
+  const handleCancel = () => {
+    resetForm();
+    onClose();
+  };
+
+  /* create project */
   const createProject = async () => {
-  if (!name || !dueDate) return;
+    const today = new Date().toISOString().split("T")[0];
 
-  const res = await fetch("/api/projects", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      name,
-      description,
-      dueDate,
-    }),
-  });
+    if (name.trim().length === 0) {
+      setError("Project name is required");
+      return;
+    }
 
-  const newProject: Project = await res.json();
+    if (name.length > 50) {
+      setError("Project name cannot exceed 50 characters");
+      return;
+    }
+    if (description.length > 300) {
+      setError("Description cannot exceed 300 characters");
+      return;
+    }
 
-  dispatch(addProject(newProject));
+    if (!dueDate) {
+      setError("Due date is required");
+      return;
+    }
 
-  setName("");
-  setDescription("");
-  setDueDate("");
+    if (dueDate < today) {
+      setError("Due date cannot be earlier than today");
+      return;
+    }
 
-  onClose();
-};
+    if (dueDate > "2030-12-31") {
+      setError("Due date cannot be after 31/12/2030");
+      return;
+    }
+
+    const res = await fetch("/api/projects", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name,
+        description,
+        dueDate,
+      }),
+    });
+
+    const newProject: Project = await res.json();
+
+    dispatch(addProject(newProject));
+
+    resetForm();
+
+    onClose();
+  };
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
+    <Dialog open={open} onClose={handleCancel} fullWidth maxWidth="sm">
       <DialogTitle>Create Project</DialogTitle>
 
       <DialogContent>
@@ -59,6 +107,7 @@ export default function CreateProjectDialog({
           fullWidth
           required
           margin="normal"
+          inputProps={{ maxLength: 50 }}
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
@@ -71,6 +120,10 @@ export default function CreateProjectDialog({
           rows={3}
           value={description}
           onChange={(e) => setDescription(e.target.value)}
+          sx={{
+            wordBreak: "break-word",
+            whiteSpace: "pre-wrap",
+          }}
         />
 
         <TextField
@@ -80,19 +133,24 @@ export default function CreateProjectDialog({
           required
           margin="normal"
           InputLabelProps={{ shrink: true }}
+          inputProps={{
+            min: new Date().toISOString().split("T")[0],
+          }}
           value={dueDate}
           onChange={(e) => setDueDate(e.target.value)}
         />
+
+        {error && (
+          <Typography color="error" sx={{ mt: 1 }}>
+            {error}
+          </Typography>
+        )}
       </DialogContent>
 
       <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
+        <Button onClick={handleCancel}>Cancel</Button>
 
-        <Button
-          variant="contained"
-          onClick={createProject}
-          disabled={!name || !dueDate}
-        >
+        <Button variant="contained" onClick={createProject}>
           Create
         </Button>
       </DialogActions>
