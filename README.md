@@ -58,7 +58,7 @@ You can try the deployed application here:
 
 ---
 
-⚙️ Setup Instructions
+### ⚙️ Setup Instructions
 
 Follow the steps below to run the project locally.
 
@@ -89,79 +89,129 @@ http://localhost:3000
 
 Open the browser and navigate to the above URL.
 
-📂 Folder Structure
+---
+
+### 📂 Folder Structure
 
 The project follows a modular and scalable structure using the Next.js App Router architecture.
 
 task-manager-app-nextjs
+
 │
+
 ├── app
+
 │   ├── api
+
 │   │   ├── auth
+
 │   │   │   ├── login
+
 │   │   │   └── signup
+
 │   │   ├── projects
+
 │   │   └── tasks
+
 │   │
+
 │   ├── dashboard
+
 │   ├── login
+
 │   ├── signup
+
 │   └── not-found
+
 │
+
 ├── components
+
 │   ├── ProjectCard.tsx
+
 │   ├── TaskCard.tsx
+
 │   ├── TaskDialog.tsx
+
 │   ├── CreateProjectDialog.tsx
+
 │   └── StatsCard.tsx
+
 │
+
 ├── redux
+
 │   ├── store.ts
+
 │   └── slices
+
 │       ├── projectSlice.ts
+
 │       ├── taskSlice.ts
+
 │       └── authSlice.ts
+
 │
+
 ├── hooks
+
 │   └── useAuth.ts
+
 │
+
 ├── types
+
 │   └── index.ts
+
 │
+
 ├── utils
+
 │   └── storage.ts
+
 │
+
 ├── public
+
 │
+
 └── README.md
-📜 Available Scripts
+
+---
+
+### 📜 Available Scripts
 
 Run the development server:
 
-npm run dev
+> npm run dev
 
 Build the project:
 
-npm run build
+> npm run build
 
 Start the production build:
 
-npm start
+> npm start
 
 Run ESLint:
 
-npm run lint
-📌 Notes
+> npm run lint
 
-Authentication is implemented using JWT stored in localStorage.
+---
 
-Redux Toolkit is used for global state management of projects and tasks.
+### 📌 Notes
 
-The application uses Next.js API routes as a lightweight backend layer.
+* Authentication is implemented using JWT stored in localStorage.
 
-Data is stored using in-memory storage/local utilities, as required for the assignment.
+* Redux Toolkit is used for global state management of projects and tasks.
 
-👨‍💻 Author
+* The application uses Next.js API routes as a lightweight backend layer.
+
+* Data is stored using in-memory storage/local utilities, as required for the assignment.
+
+---
+
+### 👨‍💻 Author
 
 Developed as part of a technical assignment demonstrating modern Next.js, Redux Toolkit, and scalable frontend architecture.
 
