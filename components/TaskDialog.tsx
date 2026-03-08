@@ -29,6 +29,7 @@ export default function TaskDialog({
   const dispatch = useDispatch<AppDispatch>();
 
   const [tasks, setTasks] = useState([""]);
+  const [error, setError] = useState("");
 
   const addTaskField = () => {
     setTasks([...tasks, ""]);
@@ -50,10 +51,15 @@ export default function TaskDialog({
     onClose();
   };
 
-  const createTasks = async () => {
-    const validTasks = tasks.filter((t) => t.trim() !== "");
+  const validTasks = tasks.filter((t) => t.trim() !== "");
 
-    if (validTasks.length === 0) return;
+  const createTasks = async () => {
+    if (validTasks.length === 0) {
+      setError("Enetr the task.");
+      return;
+    }
+
+    setError("");
 
     await Promise.all(
       validTasks.map(async (title) => {
@@ -93,7 +99,12 @@ export default function TaskDialog({
               label={`Task ${index + 1}`}
               fullWidth
               value={task}
-              onChange={(e) => updateTaskField(e.target.value, index)}
+              onChange={(e) => {
+                updateTaskField(e.target.value, index);
+                setError("");
+              }}
+              error={Boolean(error)}
+              helperText={error}
             />
 
             {tasks.length > 1 && (

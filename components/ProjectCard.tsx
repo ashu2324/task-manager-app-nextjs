@@ -43,6 +43,8 @@ export default function ProjectCard({
   const [dueDate, setDueDate] = useState(project.dueDate || "");
 
   const [error, setError] = useState("");
+  const [nameError, setNameError] = useState("");
+  const [dateError, setDateError] = useState("");
 
   const resetForm = () => {
     setName(project.name);
@@ -54,12 +56,12 @@ export default function ProjectCard({
     const today = new Date().toISOString().split("T")[0];
 
     if (name.trim().length === 0) {
-      setError("Project name is required");
+      setNameError("Project name is required");
       return;
     }
 
     if (name.length > 50) {
-      setError("Project name cannot exceed 50 characters");
+      setNameError("Project name cannot exceed 50 characters");
       return;
     }
     if (description.length > 300) {
@@ -68,17 +70,17 @@ export default function ProjectCard({
     }
 
     if (!dueDate) {
-      setError("Due date is required");
+      setDateError("Due date is required");
       return;
     }
 
     if (dueDate < today) {
-      setError("Due date cannot be earlier than today");
+      setDateError("Due date cannot be earlier than today");
       return;
     }
 
     if (dueDate > "2030-12-31") {
-      setError("Due date cannot be after 31/12/2030");
+      setDateError("Due date cannot be after 31/12/2030");
       return;
     }
 
@@ -198,7 +200,12 @@ export default function ProjectCard({
             fullWidth
             margin="normal"
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e) => {
+              setName(e.target.value);
+              setNameError("");
+            }}
+            error={Boolean(nameError)}
+            helperText={nameError}
           />
 
           <TextField
@@ -208,7 +215,12 @@ export default function ProjectCard({
             rows={3}
             margin="normal"
             value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            onChange={(e) => {
+              setDescription(e.target.value);
+              setError("");
+            }}
+            error={Boolean(error)}
+            helperText={error}
           />
 
           <TextField
@@ -223,7 +235,12 @@ export default function ProjectCard({
               max: "2030-12-31",
             }}
             value={dueDate}
-            onChange={(e) => setDueDate(e.target.value)}
+            onChange={(e) => {
+              setDueDate(e.target.value);
+              setDateError("");
+            }}
+            error={Boolean(dateError)}
+            helperText={dateError}
           />
 
           {error && (

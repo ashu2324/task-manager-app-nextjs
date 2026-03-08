@@ -27,7 +27,8 @@ export default function CreateProjectDialog({
   const [dueDate, setDueDate] = useState("");
 
   const [error, setError] = useState("");
-
+  const [nameError, setNameError] = useState("");
+  const [dateError, setDateError] = useState("");
   /* reset form */
 
   const resetForm = () => {
@@ -48,12 +49,12 @@ export default function CreateProjectDialog({
     const today = new Date().toISOString().split("T")[0];
 
     if (name.trim().length === 0) {
-      setError("Project name is required");
+      setNameError("Project name is required");
       return;
     }
 
     if (name.length > 50) {
-      setError("Project name cannot exceed 50 characters");
+      setNameError("Project name cannot exceed 50 characters");
       return;
     }
     if (description.length > 300) {
@@ -62,17 +63,17 @@ export default function CreateProjectDialog({
     }
 
     if (!dueDate) {
-      setError("Due date is required");
+      setDateError("Due date is required");
       return;
     }
 
     if (dueDate < today) {
-      setError("Due date cannot be earlier than today");
+      setDateError("Due date cannot be earlier than today");
       return;
     }
 
     if (dueDate > "2030-12-31") {
-      setError("Due date cannot be after 31/12/2030");
+      setDateError("Due date cannot be after 31/12/2030");
       return;
     }
 
@@ -105,25 +106,29 @@ export default function CreateProjectDialog({
         <TextField
           label="Project Name"
           fullWidth
-          required
           margin="normal"
-          inputProps={{ maxLength: 50 }}
           value={name}
-          onChange={(e) => setName(e.target.value)}
+          onChange={(e) => {
+            setName(e.target.value);
+            setNameError("");
+          }}
+          error={Boolean(nameError)}
+          helperText={nameError}
         />
 
         <TextField
-          label="Description (optional)"
+          label="Description"
           fullWidth
-          margin="normal"
           multiline
           rows={3}
+          margin="normal"
           value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          sx={{
-            wordBreak: "break-word",
-            whiteSpace: "pre-wrap",
+          onChange={(e) => {
+            setDescription(e.target.value);
+            setError("");
           }}
+          error={Boolean(error)}
+          helperText={error}
         />
 
         <TextField
@@ -135,9 +140,15 @@ export default function CreateProjectDialog({
           InputLabelProps={{ shrink: true }}
           inputProps={{
             min: new Date().toISOString().split("T")[0],
+            max: "2030-12-31",
           }}
           value={dueDate}
-          onChange={(e) => setDueDate(e.target.value)}
+          onChange={(e) => {
+            setDueDate(e.target.value);
+            setDateError("");
+          }}
+          error={Boolean(dateError)}
+          helperText={dateError}
         />
 
         {error && (

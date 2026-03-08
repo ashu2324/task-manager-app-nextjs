@@ -29,26 +29,37 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
 
   const [loading, setLoading] = useState(false);
+
+  const [emailError, setEmailError] = useState("");
+  const [pwdError, setPwdError] = useState("");
   const [error, setError] = useState("");
 
   const validateForm = () => {
     const emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
 
+    let isValid = true;
+
     if (!emailRegex.test(email)) {
-      setError("Enter valid lowercase email");
-      return false;
+      setEmailError("Enter valid lowercase email");
+      isValid = false;
+    } else {
+      setEmailError("");
     }
 
     if (password.length < 8) {
-      setError("Password must be minimum 8 characters");
-      return false;
+      setPwdError("Password must be minimum 8 characters");
+      isValid = false;
+    } else {
+      setPwdError("");
     }
 
-    return true;
+    return isValid;
   };
 
   const handleLogin = async () => {
     setError("");
+    setEmailError("");
+    setPwdError("");
 
     if (!validateForm()) return;
 
@@ -123,7 +134,12 @@ export default function Login() {
               fullWidth
               className="!pb-4"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                setEmailError("");
+              }}
+              error={Boolean(emailError)}
+              helperText={emailError}
             />
 
             <TextField
@@ -131,7 +147,10 @@ export default function Login() {
               type={showPassword ? "text" : "password"}
               fullWidth
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                setPwdError("");
+              }}
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">
@@ -141,6 +160,8 @@ export default function Login() {
                   </InputAdornment>
                 ),
               }}
+              error={Boolean(pwdError)}
+              helperText={pwdError}
             />
           </div>
 

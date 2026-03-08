@@ -24,31 +24,41 @@ export default function Signup() {
   const [showPassword, setShowPassword] = useState(false);
 
   const [loading, setLoading] = useState(false);
+
+  const [emailError, setEmailError] = useState("");
+  const [pwdError, setPwdError] = useState("");
   const [error, setError] = useState("");
+
   const [success, setSuccess] = useState("");
 
   const validateForm = () => {
     const emailRegex = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
-    const passwordRegex =
-      /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
+
+    let isValid = true;
 
     if (!emailRegex.test(email)) {
-      setError("Enter valid lowercase email");
-      return false;
+      setEmailError("Enter valid lowercase email");
+      isValid = false;
+    } else {
+      setEmailError("");
     }
 
     if (!passwordRegex.test(password)) {
-      setError(
+      setPwdError(
         "Password must contain 8 chars and atleast 1 uppercase, number & special character",
       );
-      return false;
+      isValid = false;
+    } else {
+      setPwdError("");
     }
 
-    return true;
+    return isValid;
   };
 
   const handleSignup = async () => {
-    setError("");
+    setEmailError("");
+    setPwdError("");
     setSuccess("");
 
     if (!validateForm()) return;
@@ -99,10 +109,14 @@ export default function Signup() {
           <TextField
             label="Email"
             type="email"
-            className="!pb-4"
             fullWidth
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(e) => {
+              setEmail(e.target.value);
+              setEmailError("");
+            }}
+            error={Boolean(emailError)}
+            helperText={emailError}
           />
 
           <TextField
@@ -110,7 +124,10 @@ export default function Signup() {
             type={showPassword ? "text" : "password"}
             fullWidth
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => {
+              setPassword(e.target.value);
+              setPwdError("");
+            }}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
@@ -120,6 +137,8 @@ export default function Signup() {
                 </InputAdornment>
               ),
             }}
+            error={Boolean(pwdError)}
+            helperText={pwdError}
           />
 
           {error && (
